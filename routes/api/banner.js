@@ -1,11 +1,8 @@
-const productController  = require("../../controllers/ProductController")
+const BannerController  = require("../../controllers/BannerController")
 const express = require("express")
 const routes = express.Router()
 const multer = require('multer')
 const path = require('path')
-const app = express()
-
-app.use(express.static('public/images'));
 
 const storage = multer.diskStorage({
     destination : './public/upload/image',
@@ -17,12 +14,11 @@ const upload = multer({
     storage : storage
 });
 
-//routes user
-routes.route("/product")
-    .get(productController.index)
-    .post(upload.single('image') , productController.create)
-routes.route("/product/:id")
-    .get(productController.filter)
-    .put(productController.update)
-    .delete(productController.destroy)
+//routes category
+routes.route("/banner")
+    .get(BannerController.index)
+    .post(upload.single('image') , BannerController.create)
+routes.route("/banner/:id")
+    .put(upload.single('image') , BannerController.update)
+    .delete(BannerController.destroy)
 module.exports = routes

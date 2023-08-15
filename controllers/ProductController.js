@@ -40,8 +40,8 @@ const create = (req , res) => {
         star_rating = req.body.star_rating ,
         quantity = req.body.quantity ,
         price = req.body.price ,
-        image = req.file.filename
-        description = req.body.description,
+        image = req.file.filename ,
+        description = req.body.description ,
         is_active = req.body.is_active ,
         create_at = new Date()
     let sql = "INSERT INTO product(name,barcode,star_rating,quantity,price,image,description,is_active,create_at) VALUES(?,?,?,?,?,?,?,?,?)"
@@ -58,7 +58,7 @@ const create = (req , res) => {
                 is_active,
                 create_at
             ],
-            (error,result) => {
+            (error , result) => {
             if(error){     
                 throw err
             }
@@ -76,7 +76,7 @@ const update = (req , res) => {
         star_rating = req.body.star_rating ,
         quantity = req.body.quantity ,
         price = req.body.price ,
-        image = req.body.image ,
+        image = req.file.filename ,
         description = req.body.description ,
         is_active = req.body.is_active ,
         create_at = new Date()
@@ -96,7 +96,7 @@ const update = (req , res) => {
                 create_at ,
                 id
             ],
-            (error,result) => {
+            (error , result) => {
             if(error){
                 throw err
             }
@@ -121,7 +121,6 @@ const destroy = (req , res) => {
         console.error(error)
     }
 }
-
 
 module.exports = {
    index,

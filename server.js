@@ -5,6 +5,8 @@ const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 // parse application x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }))
+//serves your public folder at your app
+app.use(express.static(__dirname + '/public'));
 
 require("dotenv").config()
 
@@ -12,7 +14,8 @@ require("dotenv").config()
 app.use(require("./routes/api/employee"))
 app.use(require("./routes/api/category"))
 app.use(require("./routes/api/product"))
-
+app.use(require("./routes/api/banner"))
+app.use(require("./routes/api/wishlist"))
 
 
 const port = process.env.PORT || 8000
