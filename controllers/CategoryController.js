@@ -35,13 +35,15 @@ const filter = (req , res) => {
 
 // Show the form for creating a new resource.
 const create = (req , res) => {
-    let name = req.body.name
-    let parent_id = req.body.parent_id
-    let status = req.body.status
-	let create_at = new Date()
-    let sql = "INSERT INTO category(name,parent_id,status,create_at) VALUES(?,?,?,?)"
+    let name = req.body.name ,
+        description = req.body.description ,
+        parent_id = req.body.parent_id ,
+        status = req.body.status ,
+        create_at = new Date()
+
+    let sql = "INSERT INTO category(name,description,parent_id,status,create_at) VALUES(?,?,?,?,?)"
     try {
-        connection.query(sql,[name,parent_id,status,create_at],(error,result) => {
+        connection.query(sql,[name,description,parent_id,status,create_at],(error,result) => {
             if(error){
                 throw err
             }
@@ -54,14 +56,16 @@ const create = (req , res) => {
 }
 // Update the specified resource in storage
 const update = (req , res) => {
-    let id = req.params.id
-    let name = req.body.name
-    let parent_id = req.body.parent_id
-    let status = req.body.status
-	let create_at = new Date()
-    let sql = " UPDATE category SET name = ?, parent_id = ?, status = ? , create_at = ? WHERE category_id = ?"
+    let id = req.params.id ,
+        name = req.body.name ,
+        description = req.body.description ,
+        parent_id = req.body.parent_id ,
+        status = req.body.status ,
+        create_at = new Date()
+        
+    let sql = " UPDATE category SET name = ?, description = ?, parent_id = ?, status = ? , create_at = ? WHERE category_id = ?"
     try {
-        connection.query(sql,[ name , parent_id , status , create_at , id],(error,result) => {
+        connection.query(sql,[ name , description , parent_id , status , create_at , id],(error,result) => {
             if(error){
                 throw err
             }
@@ -74,7 +78,6 @@ const update = (req , res) => {
 // Remove the specified resource from storage
 const destroy = (req , res) => {
     let id = req.params.id
-    console.log(id)
     let sql = "DELETE FROM category WHERE category_id = ? "
     try {
         connection.query(sql,[id],(error,result)=>{
@@ -89,8 +92,9 @@ const destroy = (req , res) => {
 }
 
 const changeStatus = (req,res) => {
-    let id = req.params.id
-    let status = req.params.status
+    let id = req.params.id,
+        status = req.params.status
+        
     let sql = " UPDATE category SET status = ?  WHERE category_id = ?"
     try {
         connection.query(sql,[ status,id],(error,result) => {

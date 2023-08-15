@@ -11,6 +11,9 @@ require("dotenv").config()
 // users Routes
 app.use(require("./routes/api/employee"))
 app.use(require("./routes/api/category"))
+app.use(require("./routes/api/product"))
+
+
 
 const port = process.env.PORT || 8000
 app.listen(port , () => {
