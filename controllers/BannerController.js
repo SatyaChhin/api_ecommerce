@@ -18,7 +18,7 @@ const index = (req , res) => {
 
 // Show the form for creating a new resource.
 const create = (req , res) => {
-    let image = req.file.filename ,
+    let image = ("/upload/image/" + req.file.filename) ,
         description = req.body.description ,
         create_at = new Date()
 
@@ -44,7 +44,7 @@ const create = (req , res) => {
 // Update the specified resource in storage
 const update = (req , res) => {
     let id = req.params.id ,
-        image = req.file.filename,
+        image = ("/upload/image/" + req.file.filename) ,
         description = req.body.description,
         updated_at = new Date()
     let sql = " UPDATE banner SET image = ?, description = ?, updated_at = ? WHERE banner_id  = ?"

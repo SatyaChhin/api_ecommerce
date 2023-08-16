@@ -16,6 +16,7 @@ app.use(require("./routes/api/category"))
 app.use(require("./routes/api/product"))
 app.use(require("./routes/api/banner"))
 app.use(require("./routes/api/wishlist"))
+app.use(require("./routes/api/customer"))
 
 
 const port = process.env.PORT || 8000

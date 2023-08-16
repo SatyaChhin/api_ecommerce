@@ -1,36 +1,20 @@
 const connection = require("../db/db")
+const { isEmptyOrNull } = require("../util/service")
 
-const index = (req , res) => {
-    let sql = "SELECT * FROM product ORDER BY product_id  DESC "
-    try {
-        connection.query(sql,(error,result) => {
-            if(error){
-                throw error
-            }
-            res.json({
-                list : result
-            })
-        })
-    } catch (error) {
-        console.error(error)
-    }
+//get data all products
+const index = async (req , res) => {
+    const listProduct = await connection.query("SELECT * FROM product ORDER BY product_id  DESC ")
+    return res.json({
+        list : listProduct
+    })
 } 
-
-const filter = (req , res) => {
+//filter data  products
+const filter = async (req , res) => {
     let id = req.params.id
-    let sql = "SELECT * FROM product WHERE product_id = ?"
-    try {
-        connection.query(sql,[id],(error,result) => {
-            if(error){
-                throw error
-            }
-            res.json({
-                list : result
-            })
-        })
-    } catch (error) {
-        console.error(error)
-    }
+    const filterProduct = await connection.query("SELECT * FROM product WHERE product_id = ? " , [id])
+    return res.json({
+        list : filterProduct
+    })
 } 
 
 // Show the form for creating a new resource.
@@ -40,10 +24,27 @@ const create = (req , res) => {
         star_rating = req.body.star_rating ,
         quantity = req.body.quantity ,
         price = req.body.price ,
-        image = req.file.filename ,
+        image = ("/upload/image/" + req.file.filename) ,
         description = req.body.description ,
         is_active = req.body.is_active ,
         create_at = new Date()
+
+    // validate parameters
+    let message  = {}
+    if(isEmptyOrNull(name)){message.name="name required!"}
+    if(isEmptyOrNull(barcode)){message.barcode="barcode required!"}
+    if(isEmptyOrNull(star_rating)){message.star_rating="star_rating required!"}
+    if(isEmptyOrNull(quantity)){message.quantity="quantity required!"}
+    if(isEmptyOrNull(price)){message.price="price required!"}
+    if(isEmptyOrNull(description)){message.description="description required!"}
+    if(Object.keys(message).length > 0){
+        res.json({
+            error:true,
+            message:message
+        })
+        return false
+    }
+
     let sql = "INSERT INTO product(name,barcode,star_rating,quantity,price,image,description,is_active,create_at) VALUES(?,?,?,?,?,?,?,?,?)"
     try {
         connection.query(sql,
@@ -76,12 +77,12 @@ const update = (req , res) => {
         star_rating = req.body.star_rating ,
         quantity = req.body.quantity ,
         price = req.body.price ,
-        image = req.file.filename ,
+        image = ("/upload/image/" + req.file.filename) ,
         description = req.body.description ,
         is_active = req.body.is_active ,
-        create_at = new Date()
+        updated_at = new Date()
         
-    let sql = " UPDATE product SET barcode = ?, name = ?, star_rating = ?, quantity = ?, price = ? , image = ? ,  description = ? , is_active = ? , create_at = ? WHERE product_id  = ?"
+    let sql = " UPDATE product SET barcode = ?, name = ?, star_rating = ?, quantity = ?, price = ? , image = ? ,  description = ? , is_active = ? , updated_at = ? WHERE product_id  = ?"
     try {
         connection.query(sql,
             [ 
@@ -93,7 +94,7 @@ const update = (req , res) => {
                 image ,
                 description ,
                 is_active,
-                create_at ,
+                updated_at ,
                 id
             ],
             (error , result) => {

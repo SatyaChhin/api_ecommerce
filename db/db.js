@@ -1,4 +1,5 @@
-const mysql = require("mysql2")
+const mysql = require('mysql')
+const util = require('util')
 // create the connection to database
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -6,7 +7,7 @@ const connection = mysql.createConnection({
     password: "",
     database: 'api_ecommerce'
 })
-
+connection.query = util.promisify(connection.query).bind(connection)
 connection.connect((err) => {
     err ? console.log(err) : console.log("Database connection")
 })
