@@ -9,7 +9,7 @@ const connection = mysql.createConnection({
 })
 connection.query = util.promisify(connection.query).bind(connection)
 connection.connect((err) => {
-    err ? console.log(err) : console.log("Database connection")
+    err ? console.log(err) : console.log("Database connection success 👻👻👻 ")
 })
 
 module.exports = connection
