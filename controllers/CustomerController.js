@@ -10,10 +10,6 @@ const index = async (req , res) => {
 } 
 
 const create = (req,res) => {
-    // check is exist
-    // parameter required
-    // password bcrypt
-    // inert two tables customer/customer_address 
     let {
         username, 
         password,
@@ -38,7 +34,9 @@ const create = (req,res) => {
         })
         return false
     }
-    const sqlFind = "SELECT customer_id FROM customer WHERE username = ? "
+    const sqlFind = `SELECT customer_id 
+                    FROM customer 
+                    WHERE username = ?`
     connection.query(sqlFind,[username],(error1,result1)=>{
         if(result1.length > 0){ 
             res.json({
@@ -48,13 +46,16 @@ const create = (req,res) => {
             return false;
         }else{
             password = bcrypt.hashSync(password,10)
-
-            const sqlCustomer = "INSERT INTO customer (firstname, lastname, gender, username, password) VALUES (?, ?, ?, ?, ?) "
+            const sqlCustomer = `INSERT INTO customer 
+                                (firstname, lastname, gender, username, password) 
+                                VALUES (?, ?, ?, ?, ?)`
             const paramCustomer = [firstname, lastname, gender, username, password]
-            connection.query(sqlCustomer,paramCustomer,(error2,result2)=>{ // insert to customer
+            connection.query(sqlCustomer,paramCustomer,(error2,result2)=>{ 
                 if(!error2){
                     // insert customer_address
-                    const sqlCustomerAdd = "INSERT INTO customer_address (customer_id, province_id, firstname, lastname, tel, address_des) VALUES (?,?,?,?,?,?) "
+                    const sqlCustomerAdd = `INSERT INTO customer_address 
+                                            (customer_id, province_id, firstname, lastname, tel, address_des) 
+                                            VALUES (?,?,?,?,?,?)`
                     const paramCustomerAdd = [result2.insertId, province_id, firstname, lastname, username, address_des]
                     connection.query(sqlCustomerAdd,paramCustomerAdd,(error3,result3)=>{
                         if(!error3){
@@ -75,7 +76,6 @@ const create = (req,res) => {
     })
 }
 
-
 // Update the specified resource in storage
 const update = (req , res) => {
     const {
@@ -91,13 +91,15 @@ const update = (req , res) => {
     if(isEmptyOrNull(lastname)){message.lastname=" lastname required!"}
     if(isEmptyOrNull(gender)){message.gender=" gender required!"}
     if(Object.keys(message).length > 0){
-        res.json({
+        res.json({ 
             error:true,
             message:message
         })
         return false
     }
-    let sql = " UPDATE customer SET firstname = ?, lastname = ?, gender = ?, updated_at = ? WHERE customer_id   = ?"
+    let sql = ` UPDATE customer 
+                SET firstname = ?, lastname = ?, gender = ?, updated_at = ? 
+                WHERE customer_id   = ?`
     try {
         connection.query(sql,
             [ 
@@ -120,7 +122,8 @@ const update = (req , res) => {
 // Remove the specified resource from storage
 const destroy = (req , res) => {
     let id = req.params.id
-    let sql = "DELETE FROM customer WHERE customer_id = ? "
+    let sql = `DELETE FROM customer 
+               WHERE customer_id = ?`
     try {
         connection.query(sql,[id],(error,result)=>{
             if(error){

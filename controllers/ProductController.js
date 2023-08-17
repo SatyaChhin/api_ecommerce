@@ -19,16 +19,17 @@ const filter = async (req , res) => {
 
 // Show the form for creating a new resource.
 const create = (req , res) => {
-    let name = req.body.name ,
-        barcode = req.body.barcode ,
-        star_rating = req.body.star_rating ,
-        quantity = req.body.quantity ,
-        price = req.body.price ,
-        image = ("/upload/image/" + req.file.filename) ,
-        description = req.body.description ,
-        is_active = req.body.is_active ,
-        create_at = new Date()
-
+    let {
+        name,
+        barcode,
+        star_rating,
+        quantity,
+        price,
+        description,
+        is_active,
+    } = req.body
+    let image = ("/upload/image/" + req.file.filename) 
+    let create_at = new Date()
     // validate parameters
     let message  = {}
     if(isEmptyOrNull(name)){message.name="name required!"}
@@ -45,7 +46,17 @@ const create = (req , res) => {
         return false
     }
 
-    let sql = "INSERT INTO product(name,barcode,star_rating,quantity,price,image,description,is_active,create_at) VALUES(?,?,?,?,?,?,?,?,?)"
+    let sql = `INSERT INTO product(
+                    name,
+                    barcode,
+                    star_rating,
+                    quantity,
+                    price,image,
+                    description,
+                    is_active,
+                    create_at
+                ) 
+               VALUES(?,?,?,?,?,?,?,?,?)`
     try {
         connection.query(sql,
             [
@@ -71,18 +82,48 @@ const create = (req , res) => {
 }
 // Update the specified resource in storage
 const update = (req , res) => {
-    let id = req.params.id ,
-        name = req.body.name ,
-        barcode = req.body.barcode ,
-        star_rating = req.body.star_rating ,
-        quantity = req.body.quantity ,
-        price = req.body.price ,
-        image = ("/upload/image/" + req.file.filename) ,
-        description = req.body.description ,
-        is_active = req.body.is_active ,
-        updated_at = new Date()
-        
-    let sql = " UPDATE product SET barcode = ?, name = ?, star_rating = ?, quantity = ?, price = ? , image = ? ,  description = ? , is_active = ? , updated_at = ? WHERE product_id  = ?"
+    let {
+        name,
+        barcode,
+        star_rating,
+        quantity,
+        price,
+        description,
+        is_active,
+    } = req.body
+    let id = req.params.id 
+    let image = ("/upload/image/" + req.file.filename) 
+    let updated_at = new Date()
+
+     // validate parameters
+     let message  = {}
+     if(isEmptyOrNull(name)){message.name="name required!"}
+     if(isEmptyOrNull(barcode)){message.barcode="barcode required!"}
+     if(isEmptyOrNull(star_rating)){message.star_rating="star_rating required!"}
+     if(isEmptyOrNull(quantity)){message.quantity="quantity required!"}
+     if(isEmptyOrNull(price)){message.price="price required!"}
+     if(isEmptyOrNull(description)){message.description="description required!"}
+     if(Object.keys(message).length > 0){
+         res.json({
+             error:true,
+             message:message
+         })
+         return false
+     }
+    //update data product by id  product
+    let sql = `UPDATE product 
+               SET ( 
+                    barcode = ?,
+                    name = ?,
+                    star_rating = ?,
+                    quantity = ?,
+                    price = ? ,
+                    image = ? ,
+                    description = ? ,
+                    is_active = ? ,
+                    updated_at = ?
+                )
+               WHERE product_id  = ?`
     try {
         connection.query(sql,
             [ 
@@ -94,7 +135,7 @@ const update = (req , res) => {
                 image ,
                 description ,
                 is_active,
-                updated_at ,
+                updated_at , 
                 id
             ],
             (error , result) => {

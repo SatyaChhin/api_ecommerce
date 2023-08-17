@@ -3,6 +3,9 @@ const express = require("express")
 const routes = express.Router()
 const multer = require('multer')
 const path = require('path')
+const app = express()
+
+app.use(express.static('public/images'));
 
 const storage = multer.diskStorage({
     destination : './public/upload/image',
@@ -13,7 +16,6 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage : storage
 });
-
 //routes category
 routes.route("/banner")
     .get(BannerController.index)

@@ -27,7 +27,9 @@ const create = (req , res) => {
         country = req.body.country,
         create_at = new Date()
 
-    let sql =  "INSERT INTO employee (firstname,lastname,tel,email,base_salary,address,province,country,create_at) VALUES (?,?,?,?,?,?,?,?,?)"
+    let sql =  `INSERT INTO employee 
+               (firstname,lastname,tel,email,base_salary,address,province,country,create_at) 
+               VALUES (?,?,?,?,?,?,?,?,?)`
     try {
       connection.query(sql ,[
         fname , lname , tell , email , base_salary , address , province , country , create_at
@@ -67,7 +69,18 @@ const update = (req , res) => {
         })
         return
     }
-    let sql = "UPDATE employee SET firstname = ? , lastname = ? , tel = ? , email = ? , base_salary = ? , address = ? , province = ? , country = ? , create_at = ? WHERE employee_id = ? "
+    let sql = `UPDATE employee 
+               SET (firstname = ?, 
+                    lastname = ?,
+                    tel = ?,
+                    email = ?,
+                    base_salary = ?, 
+                    address = ?, 
+                    province = ?,
+                    country = ?,
+                    create_at = ?
+                  ) 
+               WHERE employee_id = ? `
     try {
       connection.query(sql , 
         [
