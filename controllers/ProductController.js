@@ -1,9 +1,10 @@
-const connection = require("../db/db")
+const db = require("../db/db")
+const connection = db.connection
 const { isEmptyOrNull } = require("../util/service")
 
 //get data all products
 const index = async (req , res) => {
-    const listProduct = await connection.query("SELECT * FROM product ORDER BY product_id  DESC ")
+    const listProduct = await connection.all("SELECT * FROM product ORDER BY product_id  DESC ")
     return res.json({
         list : listProduct
     })
@@ -11,7 +12,7 @@ const index = async (req , res) => {
 //filter data  products
 const filter = async (req , res) => {
     let id = req.params.id
-    const filterProduct = await connection.query("SELECT * FROM product WHERE product_id = ? " , [id])
+    const filterProduct = await connection.each("SELECT * FROM product WHERE product_id = ? " , [id])
     return res.json({
         list : filterProduct
     })
@@ -47,7 +48,7 @@ const create = (req , res) => {
 
     let sql = "INSERT INTO product(name,barcode,star_rating,quantity,price,image,description,is_active,create_at) VALUES(?,?,?,?,?,?,?,?,?)"
     try {
-        connection.query(sql,
+        connection.run(sql,
             [
                 name,
                 barcode,
@@ -61,7 +62,7 @@ const create = (req , res) => {
             ],
             (error , result) => {
             if(error){     
-                throw err
+                console.log(error)
             }
             res.send(" 1 record inserted ")
         })
@@ -84,7 +85,7 @@ const update = (req , res) => {
         
     let sql = " UPDATE product SET barcode = ?, name = ?, star_rating = ?, quantity = ?, price = ? , image = ? ,  description = ? , is_active = ? , updated_at = ? WHERE product_id  = ?"
     try {
-        connection.query(sql,
+        connection.run(sql,
             [ 
                 barcode ,
                 name ,
@@ -112,7 +113,7 @@ const destroy = (req , res) => {
     let id = req.params.id
     let sql = "DELETE FROM product WHERE product_id  = ? "
     try {
-        connection.query(sql,[id],(error,result)=>{
+        connection.run(sql,[id],(error,result)=>{
             if(error){
                 throw error
             }

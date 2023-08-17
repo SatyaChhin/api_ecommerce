@@ -1,4 +1,5 @@
-const connection = require("../db/db")
+const db = require("../db/db")
+const connection = db.connection
 const { isEmptyOrNull } = require("../util/service")
 const bcrypt = require("bcrypt")
 

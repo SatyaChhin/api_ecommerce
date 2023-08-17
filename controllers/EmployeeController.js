@@ -1,4 +1,5 @@
-const connection = require("../db/db")
+const db = require("../db/db")
+const connection = db.connection
 
 const index = (req , res) => {
     let sql = "SELECT * FROM employee  ORDER BY employee_id desc"

@@ -1,15 +1,11 @@
-const mysql = require('mysql')
-const util = require('util')
+const sqlite3 = require('sqlite3').verbose();
 // create the connection to database
-const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: "",
-    database: 'api_ecommerce'
-})
-connection.query = util.promisify(connection.query).bind(connection)
-connection.connect((err) => {
-    err ? console.log(err) : console.log("Database connection")
-})
+// open the database
+let connection = new sqlite3.Database('./ecomdb.db', sqlite3.OPEN_READWRITE, (err) => {
+    if (err) {
+      console.error(err.message);
+    }
+    console.log('Connected to database.');
+ });
 
-module.exports = connection
+ module.exports = {connection };
