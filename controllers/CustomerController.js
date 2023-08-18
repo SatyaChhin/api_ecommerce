@@ -4,7 +4,7 @@ const { isEmptyOrNull } = require("../util/service")
 const bcrypt = require("bcrypt")
 
 const index = async (req , res) => {
-    const listCustomer = await connection.query("SELECT * FROM customer ORDER BY customer_id  DESC ")
+    const listCustomer = await connection.all("SELECT * FROM customer ORDER BY customer_id  DESC ")
     return res.json({
         list : listCustomer
     })
@@ -40,7 +40,7 @@ const create = (req,res) => {
         return false
     }
     const sqlFind = "SELECT customer_id FROM customer WHERE username = ? "
-    connection.query(sqlFind,[username],(error1,result1)=>{
+    connection.each(sqlFind,[username],(error1,result1)=>{
         if(result1.length > 0){ 
             res.json({
                 error:true,
@@ -100,7 +100,7 @@ const update = (req , res) => {
     }
     let sql = " UPDATE customer SET firstname = ?, lastname = ?, gender = ?, updated_at = ? WHERE customer_id   = ?"
     try {
-        connection.query(sql,
+        connection.run(sql,
             [ 
                 firstname,
                 lastname,
@@ -123,7 +123,7 @@ const destroy = (req , res) => {
     let id = req.params.id
     let sql = "DELETE FROM customer WHERE customer_id = ? "
     try {
-        connection.query(sql,[id],(error,result)=>{
+        connection.run(sql,[id],(error,result)=>{
             if(error){
                 throw error
             }

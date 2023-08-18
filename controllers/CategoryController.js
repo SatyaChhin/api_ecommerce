@@ -4,7 +4,7 @@ const connection = db.connection
 const index = (req , res) => {
     let sql = "SELECT * FROM category ORDER BY category_id DESC "
     try {
-        connection.query(sql,(error,result) => {
+        connection.all(sql,(error,result) => {
             if(error){
                 throw error
             }
@@ -21,7 +21,7 @@ const filter = (req , res) => {
     let id = req.params.id
     let sql = "SELECT * FROM category WHERE category_id = ?"
     try {
-        connection.query(sql,[id],(error,result) => {
+        connection.each(sql,[id],(error,result) => {
             if(error){
                 throw error
             }
@@ -44,7 +44,7 @@ const create = (req , res) => {
 
     let sql = "INSERT INTO category(name,description,parent_id,status,create_at) VALUES(?,?,?,?,?)"
     try {
-        connection.query(sql,[name,description,parent_id,status,create_at],(error,result) => {
+        connection.run(sql,[name,description,parent_id,status,create_at],(error,result) => {
             if(error){
                 throw error
             }
@@ -66,7 +66,7 @@ const update = (req , res) => {
         
     let sql = " UPDATE category SET name = ?, description = ?, parent_id = ?, status = ? , create_at = ? WHERE category_id = ?"
     try {
-        connection.query(sql,[ name , description , parent_id , status , create_at , id],(error,result) => {
+        connection.run(sql,[ name , description , parent_id , status , create_at , id],(error,result) => {
             if(error){
                 throw error
             }
@@ -81,7 +81,7 @@ const destroy = (req , res) => {
     let id = req.params.id
     let sql = "DELETE FROM category WHERE category_id = ? "
     try {
-        connection.query(sql,[id],(error,result)=>{
+        connection.run(sql,[id],(error,result)=>{
             if(error){
                 throw error
             }
@@ -98,7 +98,7 @@ const changeStatus = (req,res) => {
         
     let sql = " UPDATE category SET status = ?  WHERE category_id = ?"
     try {
-        connection.query(sql,[ status,id],(error,result) => {
+        connection.run(sql,[ status,id],(error,result) => {
             if(error){
                 throw error
             }

@@ -4,7 +4,7 @@ const connection = db.connection
 const index = (req , res) => {
     let sql = "SELECT * FROM banner ORDER BY banner_id  DESC "
     try {
-        connection.query(sql,(error,result) => {
+        connection.all(sql,(error,result) => {
             if(error){
                 throw error
             }
@@ -25,7 +25,7 @@ const create = (req , res) => {
 
     let sql = "INSERT INTO banner(image,description,created_at) VALUES(?,?,?)"
     try {
-        connection.query(sql,
+        connection.run(sql,
             [
                 image,
                 description,
@@ -50,7 +50,7 @@ const update = (req , res) => {
         updated_at = new Date()
     let sql = " UPDATE banner SET image = ?, description = ?, updated_at = ? WHERE banner_id  = ?"
     try {
-        connection.query(sql,
+        connection.run(sql,
             [ 
                 image ,
                 description ,
@@ -72,7 +72,7 @@ const destroy = (req , res) => {
     let id = req.params.id
     let sql = "DELETE FROM banner WHERE banner_id = ? "
     try {
-        connection.query(sql,[id],(error,result)=>{
+        connection.run(sql,[id],(error,result)=>{
             if(error){
                 throw error
             }

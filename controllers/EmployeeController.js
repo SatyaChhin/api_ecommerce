@@ -4,7 +4,7 @@ const connection = db.connection
 const index = (req , res) => {
     let sql = "SELECT * FROM employee  ORDER BY employee_id desc"
     try {
-      connection.query(sql,function (err, result) {
+      connection.all(sql,function (err, result) {
         if(err){
           throw err
         }
@@ -30,7 +30,7 @@ const create = (req , res) => {
 
     let sql =  "INSERT INTO employee (firstname,lastname,tel,email,base_salary,address,province,country,create_at) VALUES (?,?,?,?,?,?,?,?,?)"
     try {
-      connection.query(sql ,[
+      connection.run(sql ,[
         fname , lname , tell , email , base_salary , address , province , country , create_at
       ],(err , result) => {
         if (err) {
@@ -70,7 +70,7 @@ const update = (req , res) => {
     }
     let sql = "UPDATE employee SET firstname = ? , lastname = ? , tel = ? , email = ? , base_salary = ? , address = ? , province = ? , country = ? , create_at = ? WHERE employee_id = ? "
     try {
-      connection.query(sql , 
+      connection.run(sql , 
         [
           fname , 
           lname , 
@@ -96,7 +96,7 @@ const update = (req , res) => {
 const destroy = (req , res) => {
     let id = req.params.id
     try {
-      connection.query("DELETE FROM employee WHERE employee_id = ?" , [id] , (err , result) => {
+      connection.run("DELETE FROM employee WHERE employee_id = ?" , [id] , (err , result) => {
           if(err){
             throw err
           }

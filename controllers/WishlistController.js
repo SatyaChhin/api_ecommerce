@@ -4,7 +4,7 @@ const connection = db.connection
 const index = (req , res) => {
     let sql = "SELECT * FROM wishlist ORDER BY wishlist_id  DESC "
     try {
-        connection.query(sql,(error,result) => {
+        connection.all(sql,(error,result) => {
             if(error){
                 throw error
             }
@@ -24,7 +24,7 @@ const create = (req , res) => {
         create_at = new Date()
     let sql = "INSERT INTO wishlist(product_id,customer_id,create_at) VALUES(?,?,?)"
     try {
-        connection.query(sql,
+        connection.run(sql,
             [
                 product_id,
                 customer_id,
@@ -48,7 +48,7 @@ const update = (req , res) => {
         updated_at = new Date()
     let sql = " UPDATE wishlist SET product_id = ?, customer_id = ?, updated_at = ? WHERE wishlist_id  = ?"
     try {
-        connection.query(sql,
+        connection.run(sql,
             [ 
                 product_id,
                 customer_id,
@@ -70,7 +70,7 @@ const destroy = (req , res) => {
     let id = req.params.id
     let sql = "DELETE FROM wishlist WHERE wishlist_id = ? "
     try {
-        connection.query(sql,[id],(error,result)=>{
+        connection.run(sql,[id],(error,result)=>{
             if(error){
                 throw error
             }
