@@ -85,6 +85,7 @@ const create = async (req , res) => {
                 create_at
             ])
         return res.json({
+            success: true,
             message : "Product create success",
             data : createProduct
         })
@@ -157,6 +158,7 @@ const update = async (req , res) => {
                 id
             ])
         return res.json({
+            success: true,
             message : "1 record update id " + id ,
             data : updateProduct
         })
@@ -179,7 +181,6 @@ const destroy = async (req , res) => {
     } catch (error) {
         console.error(error)
     }
-
 }
 
 module.exports = {
