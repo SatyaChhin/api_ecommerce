@@ -62,7 +62,7 @@ const create = (req , res) => {
             ],
             (error , result) => {
             if(error){     
-                console.log(error)
+                throw error
             }
             res.send(" 1 record inserted ")
         })
@@ -100,7 +100,7 @@ const update = (req , res) => {
             ],
             (error , result) => {
             if(error){
-                throw err
+                throw error
             }
             res.send(" 1 record update id " + id )
         })

@@ -46,7 +46,7 @@ const create = (req , res) => {
     try {
         connection.query(sql,[name,description,parent_id,status,create_at],(error,result) => {
             if(error){
-                throw err
+                throw error
             }
             res.send(" 1 record inserted ")
         })
@@ -68,7 +68,7 @@ const update = (req , res) => {
     try {
         connection.query(sql,[ name , description , parent_id , status , create_at , id],(error,result) => {
             if(error){
-                throw err
+                throw error
             }
             res.send(" 1 record update ")
         })
@@ -100,7 +100,7 @@ const changeStatus = (req,res) => {
     try {
         connection.query(sql,[ status,id],(error,result) => {
             if(error){
-                throw err
+                throw error
             }
             res.send(" 1 record update ")
         })

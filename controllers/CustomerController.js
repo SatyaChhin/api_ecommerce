@@ -110,7 +110,7 @@ const update = (req , res) => {
             ],
             (error,result) => {
             if(error){
-                throw err
+                throw error
             }
             res.send(" 1 record update ")
         })
