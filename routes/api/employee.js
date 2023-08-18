@@ -1,6 +1,8 @@
 const employeeController  = require("../../controllers/EmployeeController")
 const express = require("express")
 const routes = express.Router()
+const { validateProduct } = require('../../validation/products/product.validation')
+
 
 //routes user
 routes.route("/employee/:id?")

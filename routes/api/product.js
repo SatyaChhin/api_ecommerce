@@ -4,6 +4,7 @@ const routes = express.Router()
 const multer = require('multer')
 const path = require('path')
 const app = express()
+const validation  = require('../../validation/products/product.validation')
 
 app.use(express.static('public/images'));
 
@@ -20,9 +21,11 @@ const upload = multer({
 //routes user
 routes.route("/product")
     .get(productController.index)
-    .post(upload.single('image') , productController.create)
+    .post(upload.single('image') , validation , productController.create)
 routes.route("/product/:id")
     .get(productController.filter)
-    .put(productController.update)
+    .put(upload.single('image') , validation , productController.update)
     .delete(productController.destroy)
+routes.route("/product/search/list")
+    .get(productController.search)
 module.exports = routes
