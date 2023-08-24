@@ -2,41 +2,38 @@ const connection = require("../db/db")
 const { isEmptyOrNull } = require("../util/service")
 const bcrypt = require("bcrypt")
 
-const index = async (req , res) => {
-    const listCustomer = await connection.query("SELECT * FROM customer ORDER BY customer_id  DESC ")
-    return res.json({
-        list : listCustomer
-    })
-} 
+const listCustomer = async (req , res) => {
 
+    try {
+        const listCustomer = await connection.query(`
+                SELECT * 
+                FROM customer 
+                ORDER BY customer_id  DESC`
+        )
+        return res.json({
+            success: true,
+            message : "Get data customer success",
+            list : listCustomer
+        })
+    } catch (error) {
+        console.log(error)
+    }
+} 
 const create = (req,res) => {
     let {
         username, 
         password,
         firstname,
         lastname,
+        tel,
         gender,
         province_id,
         address_des
-    } = req.body;
-    // validate parameters 
-    let message  = {}
-    if(isEmptyOrNull(username)){message.username="username required!"}
-    if(isEmptyOrNull(password)){message.password="password required!"}
-    if(isEmptyOrNull(firstname)){message.firstname="firstname required!"}
-    if(isEmptyOrNull(lastname)){message.lastname="lastname required!"}
-    if(isEmptyOrNull(gender)){message.gender="gender required!"}
-    if(isEmptyOrNull(province_id)){message.province_id="province_id required!"}
-    if(Object.keys(message).length > 0){
-        res.json({
-            error:true,
-            message:message
-        })
-        return false
-    }
+    } = req.body
+
     const sqlFind = `SELECT customer_id 
-                    FROM customer 
-                    WHERE username = ?`
+                     FROM customer 
+                     WHERE username = ?`
     connection.query(sqlFind,[username],(error1,result1)=>{
         if(result1.length > 0){ 
             res.json({
@@ -56,7 +53,7 @@ const create = (req,res) => {
                     const sqlCustomerAdd = `INSERT INTO customer_address 
                                             (customer_id, province_id, firstname, lastname, tel, address_des) 
                                             VALUES (?,?,?,?,?,?)`
-                    const paramCustomerAdd = [result2.insertId, province_id, firstname, lastname, username, address_des]
+                    const paramCustomerAdd = [result2.insertId, province_id, firstname, lastname, tel , address_des]
                     connection.query(sqlCustomerAdd,paramCustomerAdd,(error3,result3)=>{
                         if(!error3){
                             res.json({
@@ -78,14 +75,13 @@ const create = (req,res) => {
 
 // Update the specified resource in storage
 const update = (req , res) => {
-    const {
+    let {
         firstname,
         lastname,
         gender,
     } = req.body
-    const updated_at = new Date()
-    const id = req.params.id 
-
+    let updated_at = new Date()
+    let id = req.params.id 
     let message  = {}
     if(isEmptyOrNull(firstname)){message.firstname=" firstname required!"}
     if(isEmptyOrNull(lastname)){message.lastname=" lastname required!"}
@@ -113,7 +109,7 @@ const update = (req , res) => {
             if(error){
                 throw err
             }
-            res.send(" 1 record update ")
+            res.send(" update customer id " + id + " success")
         })
     } catch (error) {
         console.error(error)
@@ -129,15 +125,130 @@ const destroy = (req , res) => {
             if(error){
                 throw error
             }
-            res.send("Delete id " + id)
+            res.send("Delete customer id " + id + "success")
         })
     } catch (error) {
         console.error(error)
     }
 }
+const listCustomerAddress = async (req , res) => {
+    try {
+        const listCustomerAddress = await connection.query(
+            `SELECT * 
+            FROM customer_address 
+            ORDER BY customer_id  DESC 
+        `)
+        return res.json({
+            success: true,
+            message : "Get data customer address success",
+            list : listCustomerAddress
+        })
+    } catch (error) {
+        console.log(error)
+    }
+} 
+
+const createCustomerAddress =  (req , res) => {
+    let {
+        customer_id,
+        firstname,
+        lastname,
+        tel,
+        province_id,
+        address_des
+    } = req.body;
+    let message = {}
+    if(isEmptyOrNull(customer_id)) { message.customer_id = "customer_id required!"}
+    if(isEmptyOrNull(firstname)) { message.firstname = "firstname required!"}
+    if(isEmptyOrNull(lastname)) { message.lastname = "lastname required!"}
+    if(isEmptyOrNull(tel)) { message.tel = "tel required!"}
+    if(isEmptyOrNull(province_id)) { message.province_id = "province_id required!"}
+    if(isEmptyOrNull(address_des)) { message.address_des = "address_des required!"}
+    if(Object.keys(message).length > 0){
+        res.json({
+            error:true,
+            message:message
+        })
+        return;
+    }
+    let sql =  `INSERT INTO customer_address (customer_id, province_id, firstname, lastname, tel, address_des) 
+               VALUES (?,?,?,?,?,?)`;
+    let param = [customer_id,province_id,firstname,lastname,tel,address_des]
+    connection.query(sql,param,(error,row)=>{
+        if(error){
+            res.json({
+                error:true,
+                message:error
+            })
+        }else{
+            res.json({
+                message : row.affectedRows ? "Create successfully!" : "Data not in system!",
+                data : row
+            })
+        }
+    })
+}
+const updateCustomerAddress =  (req , res) => {
+    let {
+        customer_id,
+        firstname,
+        lastname,
+        tel,
+        province_id,
+        address_des
+    } = req.body;
+    let customer_address_id = req.params.id
+    let message = {}
+    if(isEmptyOrNull(customer_id)) { message.customer_id = "customer_id required!"}
+    if(isEmptyOrNull(firstname)) { message.firstname = "firstname required!"}
+    if(isEmptyOrNull(lastname)) { message.lastname = "lastname required!"}
+    if(isEmptyOrNull(tel)) { message.tel = "tel required!"}
+    if(isEmptyOrNull(province_id)) { message.province_id = "province_id required!"}
+    if(isEmptyOrNull(address_des)) { message.address_des = "address_des required!"}
+    if(Object.keys(message).length > 0){
+        res.json({
+            error:true,
+            message:message
+        })
+        return;
+    }
+    let sql = `UPDATE customer_address 
+               SET customer_id=?, province_id=?, firstname=?, lastname=?, tel=?, address_des=? 
+               WHERE customer_address_id = ?`
+    let param = [customer_id,province_id,firstname,lastname,tel,address_des,customer_address_id]
+    connection.query(sql,param,(error,row)=>{
+        if(error){
+            res.json({
+                error:true,
+                message:error
+            })
+        }else{
+            res.json({
+                message : row.affectedRows ? "update successfully!" : "Data not in system!",
+                data : row
+            })
+        }
+    })
+}
+const destroyCustomerAddress = async (req , res) => {
+    let id = req.params.id
+    let sql = `DELETE FROM customer_address 
+               WHERE customer_address_id = ?`
+
+    const destroyAddressCustomer = await connection.query(sql,[id])
+    return res.json({
+        message : 'Delete customer_address id ' + id + ' success',
+        data : destroyAddressCustomer
+    })
+}
+
 
 module.exports = {
-   index,
+   listCustomerAddress,
+   createCustomerAddress,
+   updateCustomerAddress,
+   destroyCustomerAddress,
+   listCustomer,
    create,
    update,
    destroy

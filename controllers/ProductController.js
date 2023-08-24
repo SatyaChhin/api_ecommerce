@@ -1,7 +1,4 @@
-const { log } = require("console")
 const connection = require("../db/db")
-const { isEmptyOrNull } = require("../util/service")
-
 //get data all products
 const index = async (req , res) => {
     try {
@@ -11,6 +8,8 @@ const index = async (req , res) => {
             ORDER BY product_id  DESC`
         )
         return res.json({
+            success: true,
+            message : "Get data Product success",
             list : listProduct
         })   
     } catch (error) {
@@ -140,10 +139,12 @@ const update = async (req , res) => {
 const destroy = async (req , res) => {
     try {
         let id = req.params.id
-        let sql = "DELETE FROM product WHERE product_id  = ? "
+        let sql = `DELETE FROM product 
+                   WHERE product_id  = ? `
         const destroyProduct = await connection.query(sql,[id])
 
         return res.json({
+            success: true,
             message : 'Delete Product id ' + id + ' success',
             data : destroyProduct
         })
@@ -158,6 +159,7 @@ const search = async (req , res) => {
         const product = await connection.query('SELECT * FROM product WHERE name LIKE "%' + search + '%"')
         return res.json({
             success: true,
+            message : 'Search Product Success',
             list : product
         })
     } catch (error) {
