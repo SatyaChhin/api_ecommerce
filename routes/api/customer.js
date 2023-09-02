@@ -10,6 +10,8 @@ routes.route("/customer")
 routes.route("/customer/:id")
     .put(customerController.update)
     .delete(customerController.destroy)
+routes.route("/customer/login")
+    .post(customerController.login)
 //route customer_address
 routes.route("/customer/address")
     .get(customerController.listCustomerAddress)

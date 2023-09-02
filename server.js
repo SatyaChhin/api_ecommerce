@@ -10,7 +10,6 @@ app.use(bodyParser.urlencoded({ extended: false }))
 //serves your public folder at your app
 app.use(express.static(__dirname + '/public'));
 
-
 require("dotenv").config()
 
 // users Routes
@@ -23,7 +22,6 @@ app.use(require("./routes/api/customer"))
 app.use(require("./routes/api/cart"))
 app.use(require("./routes/api/orderStatus"))
 app.use(require("./routes/api/paymentMethods"))
-
 
 
 const port = process.env.PORT || 8000

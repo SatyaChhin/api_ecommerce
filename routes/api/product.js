@@ -5,9 +5,9 @@ const multer = require('multer')
 const path = require('path')
 const app = express()
 const validation  = require('../../validation/products/product.validation')
+const { userGuard } = require("../../controllers/AuthController")
 
 app.use(express.static('public/images'));
-
 const storage = multer.diskStorage({
     destination : './public/upload/image',
     filename: ( req , file , callBack )=>{
@@ -20,7 +20,7 @@ const upload = multer({
 
 //routes user
 routes.route("/product")
-    .get(productController.index)
+    .get(userGuard(),productController.index)
     .post(upload.single('image') , validation , productController.create)
 routes.route("/product/:id")
     .get(productController.filter)
@@ -28,4 +28,5 @@ routes.route("/product/:id")
     .delete(productController.destroy)
 routes.route("/product/search/list")
     .get(productController.search)
+
 module.exports = routes

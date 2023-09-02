@@ -24,7 +24,7 @@ const create = async (req,res) => {
              sort_order 
         } = req.body
         let sql = `INSERT INTO order_status (name,message,sort_order) 
-                VALUES (?,?,?) `
+                   VALUES (?,?,?) `
         let param = [name,message,sort_order]
         let CreateOrderStatus = await connection.query(sql,param)
         res.json({

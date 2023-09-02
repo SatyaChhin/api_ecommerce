@@ -1,9 +1,10 @@
 const connection = require("../db/db")
-const { isEmptyOrNull } = require("../util/service")
+const { isEmptyOrNull , TOKEN_KEY } = require("../util/service")
 const bcrypt = require("bcrypt")
+const jwt  = require("jsonwebtoken")
+const { getPermissionUser } = require("./AuthController")
 
 const listCustomer = async (req , res) => {
-
     try {
         const listCustomer = await connection.query(`
                 SELECT * 
@@ -43,15 +44,28 @@ const create = (req,res) => {
             return false;
         }else{
             password = bcrypt.hashSync(password,10)
-            const sqlCustomer = `INSERT INTO customer 
-                                (firstname, lastname, gender, username, password) 
+            const sqlCustomer = `INSERT INTO 
+                                        customer(
+                                            firstname,
+                                            lastname,
+                                            gender,
+                                            username,
+                                            password
+                                        ) 
                                 VALUES (?, ?, ?, ?, ?)`
             const paramCustomer = [firstname, lastname, gender, username, password]
             connection.query(sqlCustomer,paramCustomer,(error2,result2)=>{ 
                 if(!error2){
                     // insert customer_address
-                    const sqlCustomerAdd = `INSERT INTO customer_address 
-                                            (customer_id, province_id, firstname, lastname, tel, address_des) 
+                    const sqlCustomerAdd = `INSERT INTO 
+                                                customer_address(
+                                                    customer_id,
+                                                    province_id,
+                                                    firstname,
+                                                    lastname,
+                                                    tel,
+                                                    address_des
+                                                ) 
                                             VALUES (?,?,?,?,?,?)`
                     const paramCustomerAdd = [result2.insertId, province_id, firstname, lastname, tel , address_des]
                     connection.query(sqlCustomerAdd,paramCustomerAdd,(error3,result3)=>{
@@ -135,9 +149,9 @@ const listCustomerAddress = async (req , res) => {
     try {
         const listCustomerAddress = await connection.query(
             `SELECT * 
-            FROM customer_address 
-            ORDER BY customer_id  DESC 
-        `)
+             FROM customer_address 
+             ORDER BY customer_id  DESC `
+        )
         return res.json({
             success: true,
             message : "Get data customer address success",
@@ -148,6 +162,51 @@ const listCustomerAddress = async (req , res) => {
     }
 } 
 
+//Login By Customer
+const login = async (req,res) => {
+    let { username , password } = req.body;
+    let message = {};
+    if(isEmptyOrNull(username)) {message.username = "Please fill in username!"}
+    if(isEmptyOrNull(password)) {message.password = "Please fill in password!"}
+    if(Object.keys(message).length>0){
+        res.json({
+            error : true,
+            message : message
+        })
+        return 
+    }
+    var user = await connection.query("SELECT * FROM customer WHERE username = ?",[ username ]);
+    if(user.length > 0){
+        var passDb = user[0].password 
+        var correct = bcrypt.compareSync(password,passDb)
+        if(correct){
+            var user = user[0]
+            delete user.password ; 
+            var permission = await getPermissionUser(user.customer_id)
+            var obj = {
+                user : user,
+                permission : permission,
+                token:""
+            }
+            var access_token = jwt.sign({data:{...obj}},TOKEN_KEY)
+            res.json({
+                ...obj, 
+                access_token:access_token,
+            })
+        }else{
+            res.json({
+                message:"Password incorrect!",
+                error:true
+            }) 
+        }
+    }else{
+        res.json({
+            message:"Account does't exist!. Please goto register!",
+            error:true
+        })
+    }
+}
+//Create customerAddress
 const createCustomerAddress =  (req , res) => {
     let {
         customer_id,
@@ -171,7 +230,15 @@ const createCustomerAddress =  (req , res) => {
         })
         return;
     }
-    let sql =  `INSERT INTO customer_address (customer_id, province_id, firstname, lastname, tel, address_des) 
+    let sql =  `INSERT INTO 
+                       customer_address (
+                            customer_id,
+                            province_id,
+                            firstname,
+                            lastname,
+                            tel,
+                            address_des
+                        ) 
                VALUES (?,?,?,?,?,?)`;
     let param = [customer_id,province_id,firstname,lastname,tel,address_des]
     connection.query(sql,param,(error,row)=>{
@@ -213,7 +280,12 @@ const updateCustomerAddress =  (req , res) => {
         return;
     }
     let sql = `UPDATE customer_address 
-               SET customer_id=?, province_id=?, firstname=?, lastname=?, tel=?, address_des=? 
+                    SET customer_id=?,
+                            province_id=?,
+                            firstname=?,
+                            lastname=?,
+                            tel=?,
+                            address_des=? 
                WHERE customer_address_id = ?`
     let param = [customer_id,province_id,firstname,lastname,tel,address_des,customer_address_id]
     connection.query(sql,param,(error,row)=>{
@@ -230,6 +302,8 @@ const updateCustomerAddress =  (req , res) => {
         }
     })
 }
+
+//delete data CustomerAddress
 const destroyCustomerAddress = async (req , res) => {
     let id = req.params.id
     let sql = `DELETE FROM customer_address 
@@ -242,14 +316,15 @@ const destroyCustomerAddress = async (req , res) => {
     })
 }
 
-
+//export module to Route Customer
 module.exports = {
+   create,
+   update,
+   destroy,
+   login,
+   listCustomer,
    listCustomerAddress,
    createCustomerAddress,
    updateCustomerAddress,
    destroyCustomerAddress,
-   listCustomer,
-   create,
-   update,
-   destroy
 }
