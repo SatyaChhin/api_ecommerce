@@ -75,7 +75,7 @@ const destroy = (req , res) => {
             if(error){
                 throw error
             }
-            res.send("Delete id " + id)
+            res.send("deletion Banner successful")
         })
     } catch (error) {
         console.error(error)
