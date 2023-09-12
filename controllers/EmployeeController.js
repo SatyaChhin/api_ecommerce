@@ -2,7 +2,7 @@ const connection = require("../db/db")
 const { isEmptyOrNull , TOKEN_KEY } = require("../util/service")
 const bcrypt = require("bcrypt")
 const jwt  = require("jsonwebtoken")
-const { getPermissionUser } = require("./AuthController")
+const { getPermissionEmployee } = require("./AuthController")
 
 const index = (req , res) => {
     let sql = "SELECT * FROM employee  ORDER BY employee_id desc"
@@ -142,12 +142,12 @@ const login = async (req,res) => {
       if(isCorrect){
           var user = user[0]
           delete user.password 
-          var permission = await getPermissionUser(user.employee_id)
+          var permission = await getPermissionEmployee(user.employee_id)
           var obj = {
               user:user,
               permission:permission,
           }
-          var access_token = jwt.sign({data:{...obj}},TOKEN_KEY,{expiresIn:"1h"})
+          var access_token = jwt.sign({data:{...obj}},TOKEN_KEY,{expiresIn:"2h"})
           var refresh_token = jwt.sign({data:{...obj}},TOKEN_KEY)
           res.json({
               ...obj,

@@ -20,7 +20,7 @@ const upload = multer({
 
 //routes user
 routes.route("/product")
-    .get(productController.index)
+    .get(userGuard('product.Read'),productController.index)
     .post(userGuard('product.Create'),upload.single('image'),validation,productController.create)
 routes.route("/product/:id")
     .get(productController.filter)

@@ -57,4 +57,19 @@ exports.getPermissionUser = async (id) => {
     ])
     return tmpArr;
 }
+exports.getPermissionEmployee = async (id) => {
+    var sql = `SELECT p.code
+        FROM employee c 
+            INNER JOIN role r ON c.role_id = r.role_id
+            INNER JOIN role_permission rp ON r.role_id = rp.role_id
+            INNER JOIN permission p ON rp.permission_id = p.permission_id
+        WHERE c.employee_id =  ? `
+    var list = await connection.query(sql, [id]);
+    var tmpArr = [];
+    list.map((item, index) => [
+        tmpArr.push(item.code)
+    ])
+    return tmpArr;
+}
+
 
