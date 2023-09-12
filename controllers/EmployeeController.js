@@ -102,7 +102,7 @@ const update = (req , res) => {
           if(err){
             throw err
           }
-          res.send("update employee id " + id)
+          res.send("update employee success")
       })
     } catch (error) {
       console.error(error)
@@ -116,7 +116,7 @@ const destroy = (req , res) => {
           if(err){
             throw err
           }
-          res.send("delete id " + id)
+          res.send("Delete Data Employee success ")
       })
     } catch (error) {
       console.error(error)

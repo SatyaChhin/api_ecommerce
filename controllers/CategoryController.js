@@ -92,7 +92,7 @@ const destroy = (req , res) => {
             if(error){
                 throw error
             }
-            res.send("Delete id " + id)
+            res.send("Delete Category Success")
         })
     } catch (error) {
         console.error(error)

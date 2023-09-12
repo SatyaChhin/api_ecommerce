@@ -123,7 +123,7 @@ const update = (req , res) => {
             if(error){
                 throw err
             }
-            res.send(" update customer id " + id + " success")
+            res.send(" update customer success")
         })
     } catch (error) {
         console.error(error)
@@ -310,7 +310,7 @@ const destroyCustomerAddress = async (req , res) => {
 
     const destroyAddressCustomer = await connection.query(sql,[id])
     return res.json({
-        message : 'Delete customer_address id ' + id + ' success',
+        message : 'Delete customer address  success',
         data : destroyAddressCustomer
     })
 }
