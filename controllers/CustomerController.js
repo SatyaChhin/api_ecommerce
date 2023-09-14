@@ -139,7 +139,7 @@ const destroy = (req , res) => {
             if(error){
                 throw error
             }
-            res.send("Delete customer id " + id + "success")
+            res.send("Delete customer Success")
         })
     } catch (error) {
         console.error(error)

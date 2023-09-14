@@ -7,10 +7,15 @@ const index = async (req , res) => {
             FROM product 
             ORDER BY product_id  DESC`
         )
+        const listCategory = await connection.query(
+            `SELECT * 
+             FROM category `
+        )
         return res.json({
             success: true,
             message : "Get data Product success",
-            list : listProduct
+            list : listProduct ,
+            listCategory : listCategory
         })   
     } catch (error) {
         console.log(error)
